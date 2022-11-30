@@ -116,8 +116,8 @@ firewall-cmd --reload
 
 git clone -b local-setup https://github.com/devopshydclub/vprofile-project.git
 
-cd vprofile-project
-vim src/main/resources/application.properties
+cd vprofile-project/
+sudo cp /vagrant/application.properties src/main/resources/application.properties
 
 mvn install
 
