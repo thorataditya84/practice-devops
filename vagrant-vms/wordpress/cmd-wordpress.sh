@@ -1,4 +1,4 @@
-# ----- ----- ----- html hosting ----- ----- -----
+# ----- ----- ----- wordpress ----- ----- -----
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y apache2 ghostscript libapache2-mod-php mysql-server php php-bcmath php-curl php-imagick php-intl php-json php-mbstring php-mysql php-xml php-zip
