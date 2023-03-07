@@ -27,7 +27,6 @@ su - devops
 # web03 - ubuntu
 sudo -i
 adduser devops # create new user
-passwd devops
 vi /etc/ssh/sshd_config # enable password authentication for ssh
 systemctl restart ssh
 visudo # add devops as sudoer

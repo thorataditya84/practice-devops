@@ -1,8 +1,6 @@
 : '
 sudo -i
 
-cat /etc/redhat-release
-
 cd /opt/
 mkdir scripts
 cd scripts

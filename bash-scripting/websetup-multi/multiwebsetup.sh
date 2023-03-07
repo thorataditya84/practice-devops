@@ -1,15 +1,3 @@
-: '
-sudo -i
-
-cat /etc/redhat-release
-
-cd /opt/
-mkdir scripts
-cd scripts
-
-vi multiwebsetup.sh
-'
-
 #!/bin/bash
 
 : ' This sript will setup
@@ -18,7 +6,7 @@ CENTOS 7 / Ubuntu 16
 HTTPD / apache2 service.
 '
 
-source ./vars.txt
+source /tmp/vars.txt
 
 yum --help >/dev/null 2>/dev/null
 if [ $? -eq 0 ]; then
@@ -96,8 +84,3 @@ else
     systemctl restart $SVC
     echo
 fi
-
-: '
-chmod u+x multiwebsetup.sh
-./multiwebsetup.sh
-'

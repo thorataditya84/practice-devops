@@ -8,15 +8,13 @@ for IP in $(cat $FILENAME); do
     echo "Running websetup on $IP"
     echo "----------------------------------------"
 
-    scp multiwebsetup.sh devops@$IP:/home/devops/scripts
-    scp vars.txt devops@$IP:/home/devops/scripts
+    scp multiwebsetup.sh devops@$IP:/tmp
+    scp vars.txt devops@$IP:/tmp
     ssh devops@$IP '
-        chmod u+x /home/devops/scripts/multiwebsetup.sh
-        sudo /home/devops/scripts/multiwebsetup.sh >> /tmp/websetup.log 2>> /tmp/websetup.log
-        echo
+        sudo chmod u+x /tmp/multiwebsetup.sh
+        sudo /tmp/multiwebsetup.sh >> /tmp/websetup.log 2>> /tmp/websetup.log
         echo
         sudo cat /tmp/websetup.log
-        echo
         echo
     '
 
