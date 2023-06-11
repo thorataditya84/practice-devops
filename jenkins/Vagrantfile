@@ -1,0 +1,92 @@
+Vagrant.configure("2") do |config|
+  
+### Jenkins ###
+  config.vm.define "jenkins01" do |jenkins01|
+    jenkins01.vm.box = "ubuntu/bionic64"
+    jenkins01.vm.hostname = "jenkins01"
+    jenkins01.vm.network "private_network", ip: "192.168.56.11"
+    # jenkins01.vm.network "public_network"
+
+    jenkins01.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+    end
+
+    jenkins01.vm.provision "shell", inline: <<-SHELL
+      #!/bin/bash
+      sudo apt update
+      sudo apt install openjdk-8-jdk maven -y
+
+      curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+        /usr/share/keyrings/jenkins-keyring.asc >/dev/null
+      echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+        https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+        /etc/apt/sources.list.d/jenkins.list >/dev/null
+
+      sudo apt-get update
+      sudo apt-get install jenkins
+    SHELL
+  end
+
+  ### Nexus ###
+  config.vm.define "nexus01" do |nexus01|
+    nexus01.vm.box = "geerlingguy/centos7"
+    nexus01.vm.hostname = "nexus01"
+    nexus01.vm.network "private_network", ip: "192.168.56.12"
+    # nexus01.vm.network "public_network"
+
+    nexus01.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+      vb.cpus = 4
+    end
+
+    nexus01.vm.provision "shell", inline: <<-SHELL
+      #!/bin/bash
+      sudo yum install wget java-1.8.0-openjdk.x86_64 -y
+
+      cd /opt
+      wget https://download.sonatype.com/nexus/3/nexus-3.29.0-02-unix.tar.gz
+      tar -xzvf nexus-3.29.0-02-unix.tar.gz
+      rm -rf nexus-3.29.0-02-unix.tar.gz
+
+      useradd nexus
+
+      rm -rf /opt/nexus-3.29.0-02/bin/nexus.rc
+      touch /opt/nexus-3.29.0-02/bin/nexus.rc
+      echo 'run_as_user="nexus"' >> /opt/nexus-3.29.0-02/bin/nexus.rc
+      
+      sudo ln -s /opt/nexus-3.29.0-02/bin/nexus /etc/init.d/nexus
+
+      touch /etc/systemd/system/nexus.service
+
+      echo "
+        [Unit]
+        Description=nexus service
+        After=network.target
+          
+        [Service]
+        Type=forking
+        LimitNOFILE=65536
+        ExecStart=/etc/init.d/nexus start
+        ExecStop=/etc/init.d/nexus stop 
+        User=nexus
+        Restart=on-abort
+        TimeoutSec=600
+          
+        [Install]
+        WantedBy=multi-user.target
+      " >> /etc/systemd/system/nexus.service
+      
+      sudo chown nexus.nexus /opt/nexus-3.29.0-02/ -R
+      sudo chown nexus.nexus /opt/sonatype-work/ -R
+
+      sudo systemctl daemon-reload
+      sudo systemctl enable nexus.service
+      sudo systemctl start nexus.service
+
+      ps -elf | grep nexus
+
+
+    SHELL
+  end
+
+end
