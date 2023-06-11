@@ -1,0 +1,4 @@
+Build
+Unit Test
+Static Code Analysis
+Deploy to Nexus
