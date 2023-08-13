@@ -1,0 +1,12 @@
+Jenkins Job URL
+    http://JENKINS_IP:8080/job/Build/build?token=TOKEN_NAME
+
+Token
+    admin:xxxxxx
+
+CRUMB
+    wget -q --auth-no-challenge --user <username> --password <password> --output-document - 'http://JENKINS_IP:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'
+
+Jenkins-Crumb:xxxxxx
+
+curl -I -X POST http://username:APItoken@JENKINS_IP:8080/job/JOB_NAME/build?token=TOKEN_NAME -H "Jenkins-Crumb:CRUMB"
